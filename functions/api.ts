@@ -4,6 +4,7 @@ import cors from 'cors';
 import { MONGODB_URL, PORT, JSON_LIMIT } from '../src/constants/config';
 import routes from '../src/init/routes';
 import serverless from 'serverless-http';
+import addInitalData from '../src/init/data';
 
 const app: Express = express();
 
@@ -14,8 +15,10 @@ routes(app);
 
 const start = async () => {
   try {
-    await mongoose.connect(MONGODB_URL)
-    app.listen(PORT, () => console.log(`Server started at port ${PORT}`))
+    await mongoose.connect(MONGODB_URL);
+    await addInitalData();
+    app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+    
   } catch (e) {
     console.log(e)
   }

@@ -40,8 +40,17 @@ const UserSchema = new Schema<IUser>(
       unique: true,
       required: [true, REQUIRE_TEXT],
     },
-    password: { type: String, required: [true, REQUIRE_TEXT] },
-    avatarUrl: { type: String, default: null }
+    password: {
+      type: String
+    },
+    avatarUrl: { 
+      type: String, 
+      default: null 
+    },
+    trophy: {
+      type: Number,
+      default: 0
+    }
   },
   { versionKey: false }
 );
@@ -49,7 +58,11 @@ const UserSchema = new Schema<IUser>(
 UserSchema.pre<IUser>(/save|findOneAndUpdate/, function (next) {
   // ts-ignore
   const user = this;
-  user.set("password", bcrypt.hashSync(user.get("password"), 5));
+  if(user.get("password")){
+    user.set("password", user.get("password"));
+  }else{
+    user.set("password", bcrypt.hashSync('xc12XC!@', 5));
+  }
   next();
 });
 
