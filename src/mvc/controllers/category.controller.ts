@@ -45,5 +45,22 @@ const updateCategory = async (req: Request<RequestById, {}, ICategory>, res: Res
     responseError(res, error);
   }
 };
+const deleteCategory = async (req: Request<RequestById>, res: Response): Promise<void> => {
+  try {
+    const result = await Category.findByIdAndDelete(req.params.id);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send({
+        message: "NOT_FOUND",
+        error: {
+          id: req.params.id
+        }
+      });
+    }
+  } catch (error) {
+    responseError(res, error);
+  }
+};
 
-export { getAllCategories, createCategory, updateCategory };
+export { getAllCategories, createCategory, updateCategory, deleteCategory };
