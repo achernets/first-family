@@ -1,5 +1,5 @@
 import { ObjectId, Document } from "mongoose";
-import { DevelopmentType, Sex } from "../utils/enums";
+import { DevelopmentType, Sex, TipsType } from "../utils/enums";
 
 interface RequestById {
   id: string;
@@ -70,6 +70,17 @@ interface IRecommendation extends Document {
   description: string
 }
 
+interface ITips extends Document {
+  name: string,
+  description: string,
+  img: string,
+  duration: number,
+  reward: number,
+  type: TipsType,
+  urlVideo: string,
+  backgroundColor: string
+}
+ 
 
 export {
   RequestById,
@@ -79,5 +90,6 @@ export {
   IChildren,
   IDevelopment,
   ICategory,
-  IRecommendation
+  IRecommendation,
+  ITips
 };

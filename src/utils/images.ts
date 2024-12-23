@@ -12,7 +12,7 @@ export const uploadImage = async (image: string): Promise<string> => {
     };
     
     const sharpImg = sharp(Buffer.from(img, 'base64'));
-    const optImg = await sharpImg.jpeg({ mozjpeg: true }).toBuffer();
+    const optImg = await sharpImg.webp().toBuffer();
 
     const tmp = await imgbbUploader({
       apiKey: IMGBB_KEY,

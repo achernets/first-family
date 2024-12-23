@@ -16,6 +16,8 @@ import {
   TOKEN_EXPIRED,
 } from "../constants/config";
 import nodemailer from "nodemailer";
+import isBase64 from 'is-base64';
+import { uploadImage } from "./images";
 
 export const genereteToken = (data: string) => {
   try {
@@ -159,4 +161,10 @@ export const sendMail = async (
     console.error("Error sending email: ", error);
     return false;
   }
+};
+
+export const addImg = async (data:string | null) =>{
+  if(data === '' || data === null) return null;
+  if(isBase64(data, { allowMime: true })) return await uploadImage(data);
+  return data;
 };

@@ -9,7 +9,12 @@ enum Sex {
     F = 'F'
 };
 
+enum TipsType { 
+    VIDEO = 'VIDEO',
+    TEXT = 'TEXT'
+}
 export {
     DevelopmentType,
-    Sex
+    Sex,
+    TipsType
 }
