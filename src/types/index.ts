@@ -80,8 +80,14 @@ interface ITips extends Document {
   urlVideo: string,
   backgroundColor: string
 }
- 
 
+interface IOffers extends Document {
+  name: string,
+  subName: string,
+  description: string,
+  hot: boolean
+}
+ 
 export {
   RequestById,
   QueryParams,
@@ -91,5 +97,6 @@ export {
   IDevelopment,
   ICategory,
   IRecommendation,
-  ITips
+  ITips,
+  IOffers
 };

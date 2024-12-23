@@ -5,7 +5,8 @@ import {
   developmentRouter,
   recommendationRouter,
   categoryRouter,
-  tipsRouter
+  tipsRouter,
+  offersRouter
 } from "../mvc/routes";
 
 export default (app: Express) => {
@@ -14,4 +15,5 @@ export default (app: Express) => {
   app.use(API_PATH, recommendationRouter);
   app.use(API_PATH, categoryRouter);
   app.use(API_PATH, tipsRouter);
+  app.use(API_PATH, offersRouter);
 };

@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
-import { addImg, responseError } from '../../utils/helpers';
-import { ITips, QueryParams, RequestById } from '../../types';
+import { responseError } from '../../utils/helpers';
+import { IOffers, QueryParams, RequestById } from '../../types';
 import { LIMIT } from '../../constants/general';
-import { Tips } from '../models'
+import { Offers } from '../models'
 
 const getAll = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
     const { limit = LIMIT, page = 1, filters } = req?.query || {};
     const skip = (page - 1) * limit;
-    const data = await Tips.find().skip(skip).limit(limit);
-    const count = await Tips.countDocuments();
+    const data = await Offers.find().skip(skip).limit(limit);
+    const count = await Offers.countDocuments();
     res.status(200).json({
       data,
       count
@@ -19,26 +19,18 @@ const getAll = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Pro
   }
 };
 
-const create = async (req: Request<{}, {}, ITips>, res: Response): Promise<void> => {
+const create = async (req: Request<{}, {}, IOffers>, res: Response): Promise<void> => {
   try {
-    const img = await addImg(req.body?.img);
-    const result = await new Tips({
-      ...req.body,
-      img
-    }).save();
+    const result = await new Offers(req.body).save();
     res.status(200).json(result);
   } catch (error) {
     responseError(res, error);
   }
 };
 
-const update = async (req: Request<RequestById, {}, ITips>, res: Response): Promise<void> => {
+const update = async (req: Request<RequestById, {}, IOffers>, res: Response): Promise<void> => {
   try {
-    const img = await addImg(req.body?.img);
-    const result = await Tips.findByIdAndUpdate(req.params.id, {
-      ...req.body,
-      img: img
-    }, { new: true });
+    const result = await Offers.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (result) {
       res.status(200).json(result);
     } else {
@@ -55,7 +47,7 @@ const update = async (req: Request<RequestById, {}, ITips>, res: Response): Prom
 };
 const remove = async (req: Request<RequestById>, res: Response): Promise<void> => {
   try {
-    const result = await Tips.findByIdAndDelete(req.params.id);
+    const result = await Offers.findByIdAndDelete(req.params.id);
     if (result) {
       res.status(200).json(result);
     } else {
