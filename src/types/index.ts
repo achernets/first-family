@@ -49,20 +49,19 @@ interface IDevelopment extends Document {
 
 interface ICategory extends Document {
   name: string,
-  image: string,
+  image: string | null,
   description: string,
   descriptionShort: string,
   recommendations: {
     id: ObjectId
   }[],
-  development: {
-    [DevelopmentType.PHYSICAL]: number,
-    [DevelopmentType.COGNITIVE]: number,
-    [DevelopmentType.MENTAL]: number
+  developments: {
+    [key: string]: number
   },
-  during: number,
-  trophy: number,
-  developmentType: DevelopmentType
+  duration: number,
+  reward: number,
+  development: ObjectId,
+  default: boolean
 }
 
 interface IRecommendation extends Document {

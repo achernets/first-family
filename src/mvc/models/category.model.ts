@@ -12,6 +12,7 @@ const CategorySchema = new Schema<ICategory>(
     image: {
       type: String,
       //required: [true, REQUIRE_TEXT],
+      default: null
     },
     description: {
       type: String,
@@ -25,27 +26,26 @@ const CategorySchema = new Schema<ICategory>(
       type: Schema.Types.ObjectId,
       ref: "Recommendation",
     }],
-    development: {
-      type: Map,
+    developments: {
+      type: Object,
       of: Number,
-      default: {
-        [DevelopmentType.PHYSICAL] : 0,
-        [DevelopmentType.COGNITIVE] : 0,
-        [DevelopmentType.MENTAL] : 0
-      }
+      default: {}
     },
-    during: {
+    duration: {
       type: Number,
       default: 0
     },
-    trophy: {
+    reward: {
       type: Number,
       default: 0
     },
-    developmentType: {
-      type: String,
-      enum: DevelopmentType,
-      default: DevelopmentType.PHYSICAL
+    development: {
+      type: Schema.Types.ObjectId,
+      ref: "Development",
+    },
+    default: {
+      type: Boolean,
+      default: false
     }
   },
   { versionKey: false }
