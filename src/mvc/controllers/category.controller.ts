@@ -6,6 +6,15 @@ import { LIMIT } from '../../constants/general';
 
 const getAllCategories = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
+    const data = await Category.find().populate('development').populate('recommendations');
+    res.status(200).json(data);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+const getAllCategoriesAdmin = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
+  try {
     const { limit = LIMIT, page = 1, filters } = req?.query || {};
     const skip = (page - 1) * limit;
     const data = await Category.find().skip(skip).limit(limit).populate('development');
@@ -72,4 +81,4 @@ const deleteCategory = async (req: Request<RequestById>, res: Response): Promise
   }
 };
 
-export { getAllCategories, createCategory, updateCategory, deleteCategory };
+export { getAllCategories, getAllCategoriesAdmin, createCategory, updateCategory, deleteCategory };
