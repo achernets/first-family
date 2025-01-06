@@ -91,4 +91,17 @@ const getById = async (req: Request<RequestById>, res: Response): Promise<void> 
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById };
+const isExistEmail = async (req: Request<{
+  email: string
+}>, res: Response): Promise<void> => {
+  try {
+    const user = await User.findOne({
+      email: req.params.email
+    });
+    res.status(200).json(user !== null);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail };
