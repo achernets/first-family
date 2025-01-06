@@ -17,10 +17,6 @@ const DevelopmentSchema = new Schema<IDevelopment>(
       type: String,
       enum: DevelopmentType,
       required: [true, REQUIRE_TEXT],
-    },
-    value: {
-      type: Number,
-      default: 0
     }
   },
   { versionKey: false }

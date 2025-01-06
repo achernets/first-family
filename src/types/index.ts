@@ -34,17 +34,16 @@ interface IUser extends Document {
   trophy: number
 }
 
-interface IChildren extends Document {
+type IChildren = {
   name: string,
   birthdate: number,
   sex: Sex;
-}
+} & Document
 
 interface IDevelopment extends Document {
   name: string,
   description: string
-  type: DevelopmentType,
-  value: number
+  type: DevelopmentType
 }
 
 interface ICategory extends Document {
@@ -86,6 +85,11 @@ interface IOffers extends Document {
   description: string,
   hot: boolean
 }
+
+type IChildDevelopment = {
+  developmentId: ObjectId,
+  value: number
+}
  
 export {
   RequestById,
@@ -97,5 +101,6 @@ export {
   ICategory,
   IRecommendation,
   ITips,
-  IOffers
+  IOffers,
+  IChildDevelopment
 };
