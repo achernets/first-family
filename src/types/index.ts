@@ -90,6 +90,12 @@ type IChildDevelopment = {
   developmentId: ObjectId,
   value: number
 }
+
+interface IChildActivity extends Document {
+  childId: ObjectId,
+  activityId: ObjectId,
+  duration: number
+}
  
 export {
   RequestById,
@@ -102,5 +108,6 @@ export {
   IRecommendation,
   ITips,
   IOffers,
-  IChildDevelopment
+  IChildDevelopment,
+  IChildActivity
 };

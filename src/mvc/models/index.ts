@@ -6,6 +6,7 @@ import Recommendation from "./recommendation.model";
 import Category from "./category.model";
 import Tips from "./tips.model";
 import Offers from "./offers.model";
+import ChildActivity from "./category.model";
 
 export {
   User,
@@ -14,5 +15,6 @@ export {
   Recommendation,
   Category,
   Tips,
-  Offers
+  Offers,
+  ChildActivity
 };

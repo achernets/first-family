@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Development } from '../models';
+import { Development, ChildActivity } from '../models';
 import { responseError } from '../../utils/helpers';
 import { QueryParams } from '../../types';
 
@@ -17,4 +17,17 @@ const getChildDevelopment = async (req: Request<{
   }
 };
 
-export { getChildDevelopment };
+const createChildActivity = async (req: Request<{
+  childId: string,
+  activityId: string,
+  duration: number,
+}, {}, {}>, res: Response): Promise<void> => {
+  try {
+    const result = await new ChildActivity(req.body).save();
+    res.status(200).json(result);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { getChildDevelopment, createChildActivity };
