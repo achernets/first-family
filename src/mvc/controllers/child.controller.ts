@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Development, ChildActivity } from '../models';
 import { responseError } from '../../utils/helpers';
-import { QueryParams } from '../../types';
+import { IChildActivity, QueryParams } from '../../types';
 
 const getChildDevelopment = async (req: Request<{
   childId: string
@@ -17,11 +17,7 @@ const getChildDevelopment = async (req: Request<{
   }
 };
 
-const createChildActivity = async (req: Request<{
-  childId: string,
-  activityId: string,
-  duration: number,
-}, {}, {}>, res: Response): Promise<void> => {
+const createChildActivity = async (req: Request<{}, {}, IChildActivity>, res: Response): Promise<void> => {
   try {
     const result = await new ChildActivity(req.body).save();
     res.status(200).json(result);
