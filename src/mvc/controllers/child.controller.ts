@@ -23,6 +23,7 @@ const createChildActivity = async (req: Request<{}, {}, IChildActivity>, res: Re
     res.status(200).json(result);
   } catch (error) {
     responseError(res, error);
+    console.log(error)
   }
 };
 

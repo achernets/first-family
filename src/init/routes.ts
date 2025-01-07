@@ -7,7 +7,8 @@ import {
   categoryRouter,
   tipsRouter,
   offersRouter,
-  childRouter
+  childRouter,
+  postRouter
 } from "../mvc/routes";
 
 export default (app: Express) => {
@@ -18,4 +19,5 @@ export default (app: Express) => {
   app.use(API_PATH, tipsRouter);
   app.use(API_PATH, offersRouter);
   app.use(API_PATH, childRouter);
+  app.use(API_PATH, postRouter);
 };

@@ -96,6 +96,25 @@ interface IChildActivity extends Document {
   activityId: ObjectId,
   duration: number
 }
+
+interface IPost extends Document {
+  description: string,
+  images: string[],
+  authorId: ObjectId,
+  createDate: number
+}
+
+interface IComment extends Document {
+  postId: ObjectId,
+  userId: ObjectId,
+  comment: string
+}
+
+interface ILike extends Document {
+  postId: ObjectId,
+  userId: ObjectId
+  commentId: ObjectId
+}
  
 export {
   RequestById,
@@ -109,5 +128,8 @@ export {
   ITips,
   IOffers,
   IChildDevelopment,
-  IChildActivity
+  IChildActivity,
+  IPost,
+  IComment,
+  ILike
 };

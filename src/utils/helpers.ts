@@ -43,6 +43,15 @@ export const isAuthUser = (token: string | string[]) => {
   }
 };
 
+export const getUserIdFromToken = (token: string | string[]) => {
+  try {
+    const s = verify(token, SECRET_KEY_JWT);
+    return s.userId;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const responseError = (
   res: Response,
   error: any,
