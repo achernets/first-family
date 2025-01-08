@@ -8,6 +8,8 @@ import Tips from "./tips.model";
 import Offers from "./offers.model";
 import ChildActivity from "./childActivity.model";
 import Post from "./post.model";
+import Like from "./like.model";
+import Comment from "./comment.model";
 
 export {
   User,
@@ -18,5 +20,7 @@ export {
   Tips,
   Offers,
   ChildActivity,
-  Post
+  Post,
+  Like,
+  Comment
 };

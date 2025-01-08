@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Post } from '../models';
+import { Post, Like } from '../models';
 import { addImg, getUserIdFromToken, responseError } from '../../utils/helpers';
-import { IPost, QueryParams } from '../../types';
+import { IPost, QueryParams, RequestById } from '../../types';
 import { LIMIT } from '../../constants/general';
 import mongoose from 'mongoose';
 
@@ -99,4 +99,53 @@ const create = async (req: Request<{}, {}, IPost>, res: Response): Promise<void>
   }
 };
 
-export { getAll, create };
+const postLike = async (req: Request<RequestById>, res: Response): Promise<void> => {
+  try {
+    const isExist = await Like.findOne({
+      postId: req.params.id,
+      userId: getUserIdFromToken(req.headers["token"])
+    });
+    if (isExist === null) {
+      const result = await new Like({
+        postId: req.params.id,
+        userId: getUserIdFromToken(req.headers["token"])
+      }).save();
+      res.status(200).json(result);
+    } else {
+      res.status(500).json({
+        message: "Post is likes",
+        key: "RECORD_IS_EXIST",
+        error: [
+          {
+            message: "Post is likes"
+          }
+        ]
+      });
+    }
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+const postUnLike = async (req: Request<RequestById>, res: Response): Promise<void> => {
+  try {
+    const result = await Like.findOneAndDelete({
+      postId: req.params.id,
+      userId: getUserIdFromToken(req.headers["token"])
+    });
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(404).send({
+        message: "NOT_FOUND",
+        error: {
+          id: req.params.id
+        }
+      });
+    }
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { getAll, create, postLike, postUnLike };
