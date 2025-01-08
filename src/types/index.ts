@@ -107,7 +107,8 @@ interface IPost extends Document {
 interface IComment extends Document {
   postId: ObjectId,
   userId: ObjectId,
-  comment: string
+  comment: string,
+  createDate: number
 }
 
 interface ILike extends Document {

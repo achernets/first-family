@@ -25,6 +25,12 @@ const PostSchema = new Schema<IPost>(
   },
   { versionKey: false }
 );
+
+PostSchema.pre('save', function(done) {
+  this.createDate = new Date().getTime();
+  done();
+});
+
 const Post = model<IPost>("Post", PostSchema);
 
 export default Post;

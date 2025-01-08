@@ -18,10 +18,20 @@ const CommentSchema = new Schema<IComment>(
       type: String,
       required: [true, REQUIRE_TEXT],
       default: null
+    },
+    createDate: {
+      type: Number, 
+      default: new Date().getTime()
     }
   },
   { versionKey: false }
 );
+
+CommentSchema.pre('save', function(done) {
+  this.createDate = new Date().getTime();
+  done();
+});
+
 const Comment = model<IComment>("Comment", CommentSchema);
 
 export default Comment;
