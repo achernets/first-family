@@ -89,12 +89,7 @@ const create = async (req: Request<{}, {}, IPost>, res: Response): Promise<void>
     const result = await new Post({
       ...req.body,
       authorId: getUserIdFromToken(req.headers["token"]),
-      images: [
-        //'https://ibb.co/wgsPZBd',
-        'https://ibb.co/1GYbLRm',
-        'https://ibb.co/Ch6y0BT'
-      ],
-      description: 'Weekend well spent! Enjoying some tennis time at Sunny Court!'
+      images
     }).save();
     res.status(200).json(result);
   } catch (error) {
