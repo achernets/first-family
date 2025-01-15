@@ -4,6 +4,7 @@ import { addImg, getUserIdFromToken, responseError } from '../../utils/helpers';
 import { IComment, IPost, QueryParams, RequestById } from '../../types';
 import { LIMIT } from '../../constants/general';
 import mongoose from 'mongoose';
+import { uploadImage } from '../../utils/images';
 
 const getAll = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
@@ -83,7 +84,7 @@ const create = async (req: Request<{}, {}, IPost>, res: Response): Promise<void>
   try {
     let images = [];
     for (let i = 0; i < req.body?.images?.length; i++) {
-      let img = await addImg(req.body.images[i]);
+      let img = await uploadImage(req.body.images[i]);
       images.push(img);
     }
     const result = await new Post({
