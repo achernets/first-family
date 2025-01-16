@@ -10,6 +10,7 @@ import ChildActivity from "./childActivity.model";
 import Post from "./post.model";
 import Like from "./like.model";
 import Comment from "./comment.model";
+import Viewer from "./viewer.model";
 
 export {
   User,
@@ -22,5 +23,6 @@ export {
   ChildActivity,
   Post,
   Like,
-  Comment
+  Comment,
+  Viewer
 };

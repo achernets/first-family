@@ -117,6 +117,12 @@ interface ILike extends Document {
   userId: ObjectId
   commentId: ObjectId
 }
+
+interface IViewer extends Document {
+  tipsId: ObjectId,
+  userId: ObjectId,
+  createDate: number
+}
  
 export {
   RequestById,
@@ -133,5 +139,6 @@ export {
   IChildActivity,
   IPost,
   IComment,
-  ILike
+  ILike,
+  IViewer
 };
