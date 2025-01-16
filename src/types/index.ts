@@ -31,13 +31,14 @@ interface IUser extends Document {
     selected: boolean
   }[],
   avatarUrl: string,
-  trophy: number
+  reward: number
 }
 
 type IChildren = {
   name: string,
   birthdate: number,
-  sex: Sex;
+  sex: Sex,
+  createDate: number
 } & Document
 
 interface IDevelopment extends Document {
@@ -95,7 +96,8 @@ type IChildDevelopment = {
 interface IChildActivity extends Document {
   childId: ObjectId,
   activityId: ObjectId,
-  duration: number
+  duration: number,
+  createDate: number
 }
 
 interface IPost extends Document {

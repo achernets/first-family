@@ -18,11 +18,21 @@ const ChildActivitySchema = new Schema<IChildActivity>(
       type: Number,
       required: [true, REQUIRE_TEXT],
       default: 0
+    },
+    createDate: {
+      type: Number,
+      default: new Date().getTime()
     }
   },
   { versionKey: false }
 );
 
+ChildActivitySchema.pre('save', function (done) {
+  this.createDate = new Date().getTime();
+  done();
+});
+
 const ChildActivity = model<IChildActivity>("ChildActivity", ChildActivitySchema);
+
 
 export default ChildActivity;

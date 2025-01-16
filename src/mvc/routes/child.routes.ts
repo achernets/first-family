@@ -3,7 +3,7 @@ import { getChildDevelopment, createChildActivity } from '../controllers/child.c
 
 const router = express.Router();
 
-router.get('/child/getChildDevelopment', getChildDevelopment);
+router.get('/child/getChildDevelopment/:id', getChildDevelopment);
 router.post('/child/createChildActivity', createChildActivity);
 
 export default router;

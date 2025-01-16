@@ -47,7 +47,7 @@ const UserSchema = new Schema<IUser>(
       type: String, 
       default: null 
     },
-    trophy: {
+    reward: {
       type: Number,
       default: 0
     }

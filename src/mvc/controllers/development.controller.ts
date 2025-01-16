@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { Development } from '../models';
 import { responseError } from '../../utils/helpers';
 import { IDevelopment, QueryParams, RequestById } from '../../types';
-
 const getAllDevelopment = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
     const data = await Development.find();
