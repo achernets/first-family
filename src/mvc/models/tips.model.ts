@@ -38,10 +38,21 @@ const TipsSchema = new Schema<ITips>(
     backgroundColor: {
       type: String,
       required: [true, REQUIRE_TEXT]
+    },
+    createDate: {
+      type: Number, 
+      default: new Date().getTime()
     }
   },
   { versionKey: false }
 );
+
+TipsSchema.pre('save', function(done) {
+  console.log(this)
+  this.createDate = new Date().getTime();
+  done();
+});
+
 const Tips = model<ITips>("Tips", TipsSchema);
 
 export default Tips;

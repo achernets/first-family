@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User, Children } from '../models';
-import { ISignUp, QueryParams, RequestById } from '../../types';
-import { genereteToken, responseError, sendMail } from '../../utils/helpers';
+import { ISignUp, IUser, QueryParams, RequestById } from '../../types';
+import { addImg, genereteToken, responseError } from '../../utils/helpers';
 import bcrypt from 'bcryptjs';
 import { USER_OR_PASSWORD_ERROR } from '../../utils/text';
 import { verify } from "jsonwebtoken";
@@ -60,7 +60,7 @@ const getMe = async (req: Request, res: Response): Promise<void> => {
     const token = req.headers["token"];
     const d = await verify(token, SECRET_KEY_JWT);
     const user = await User.findById(d.userId).populate("childrens.children");
-    //user.password = null;
+    delete user.password;
     res.status(200).json(user);
   } catch (error) {
     responseError(res, error);
@@ -104,4 +104,20 @@ const isExistEmail = async (req: Request<{
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail };
+const userUpdate = async (req: Request<RequestById, {}, IUser>, res: Response): Promise<void> => {
+  try {
+    let obj = req.body;
+    if(req.body.avatarUrl && req.body.avatarUrl !== null){
+      obj.avatarUrl = await addImg(req.body.avatarUrl);
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, {
+      $set: obj
+    }, { upsert: true, new: true });
+    delete user.password;
+    res.status(200).json(user);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate };

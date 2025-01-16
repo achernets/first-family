@@ -8,9 +8,83 @@ import { uploadImage } from '../../utils/images';
 
 const getAll = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
+    const { limit = LIMIT, page = 1, filters, } = req?.query || {};
+    const totalPosts = await Post.countDocuments({});
+    const posts = await Post.aggregate([
+      {
+        $lookup: {
+          from: "likes", // Колекція лайків
+          localField: "_id", // Поле у Post, яке відповідає за пост
+          foreignField: "postId", // Поле у Likes, яке відповідає за пост
+          as: "likes" // Массив лайків для кожного поста
+        }
+      },
+      {
+        $lookup: {
+          from: "comments", // Колекція коментарів
+          localField: "_id", // Поле у Post, яке відповідає за пост
+          foreignField: "postId", // Поле у Comments, яке відповідає за пост
+          as: "comments" // Массив коментарів для кожного поста
+        }
+      },
+      {
+        $lookup: {
+          from: "users", // Колекція користувачів (авторів)
+          localField: "authorId", // Поле у Post, яке містить авторId
+          foreignField: "_id", // Поле у Users, яке відповідає за _id автора
+          as: "author" // Повертаємо об'єкт автора в масив author
+        }
+      },
+      {
+        $addFields: {
+          like: {
+            $in: [new mongoose.Types.ObjectId(getUserIdFromToken(req.headers["token"])), "$likes.userId"] // Перевіряємо, чи є userId серед лайків
+          },
+          likeCount: { $size: "$likes" },
+          commentsCount: { $size: "$comments" },
+          author: { $arrayElemAt: ["$author", 0] } // Забираємо перший елемент з масиву авторів
+        }
+      },
+      {
+        $project: {
+          images: 1,
+          description: 1,
+          createDate: 1,
+          author: {
+            _id: 1,
+            name: 1,
+            surname: 1,
+            avatarUrl: 1
+          },
+          like: 1,
+          likeCount: 1,
+          commentsCount: 1
+        }
+      },
+      {
+        $sort: {createDate: -1}
+      },
+      {
+        $skip: (page - 1) * Number(limit),
+      },
+      {
+        $limit: Number(limit)
+      }
+    ]);
+    res.status(200).json({
+      data: posts,
+      count: totalPosts
+    });
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+const getAllMyPosts = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
+  try {
     const { limit = LIMIT, page = 1, filters } = req?.query || {};
     const totalPosts = await Post.countDocuments({});
     const posts = await Post.aggregate([
+      { $match: { authorId: new mongoose.Types.ObjectId(getUserIdFromToken(req.headers["token"])) } },
       {
         $lookup: {
           from: "likes", // Колекція лайків
@@ -314,6 +388,6 @@ const createComment = async (req: Request<RequestById, {}, IComment>, res: Respo
 
 
 export {
-  getAll, create, postLike, postUnLike,
+  getAll, getAllMyPosts, create, postLike, postUnLike,
   getAllCommentsByPost, createComment, commentLike, commentUnLike
 };

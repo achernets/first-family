@@ -76,7 +76,8 @@ interface ITips extends Document {
   reward: number,
   type: TipsType,
   urlVideo: string,
-  backgroundColor: string
+  backgroundColor: string,
+  createDate: number
 }
 
 interface IOffers extends Document {
