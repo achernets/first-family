@@ -107,7 +107,7 @@ const isExistEmail = async (req: Request<{
 const userUpdate = async (req: Request<RequestById, {}, IUser>, res: Response): Promise<void> => {
   try {
     let obj = req.body;
-    if(req.body.avatarUrl && req.body.avatarUrl !== null){
+    if (req.body.avatarUrl && req.body.avatarUrl !== null) {
       obj.avatarUrl = await addImg(req.body.avatarUrl);
     }
     const user = await User.findByIdAndUpdate(req.params.id, {
@@ -120,4 +120,26 @@ const userUpdate = async (req: Request<RequestById, {}, IUser>, res: Response): 
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate };
+const changePassword = async (req: Request<RequestById, {}, {
+  oldPassword: string,
+  password: string
+}>, res: Response): Promise<void> => {
+  try {
+    const { oldPassword, password } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!bcrypt.compareSync(oldPassword, user.password)) {
+      res.status(400).json({ message: 'Old password wrong' });
+    } else {
+      await User.findByIdAndUpdate(req.params.id, {
+        $set: {
+          password: password
+        }
+      }, { upsert: true, new: true });
+      res.status(200).json(true);
+    }
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword };
