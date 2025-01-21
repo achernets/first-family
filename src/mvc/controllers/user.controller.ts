@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { User, Children } from '../models';
 import { ISignUp, IUser, QueryParams, RequestById } from '../../types';
-import { addImg, genereteToken, responseError } from '../../utils/helpers';
+import { addImg, genereteToken, responseError, sendMail } from '../../utils/helpers';
 import bcrypt from 'bcryptjs';
 import { USER_OR_PASSWORD_ERROR } from '../../utils/text';
 import { verify } from "jsonwebtoken";
 import { SECRET_KEY_JWT } from '../../constants/config';
 import { LIMIT } from '../../constants/general';
+import generator from 'generate-password';
 
 const signIn = async (req: Request<{}, {}, {
   email: string,
@@ -32,9 +33,14 @@ const signIn = async (req: Request<{}, {}, {
 const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<void> => {
   try {
     const { user, childrens = [] } = req.body;
+    const password = generator.generate({
+          length: 8,
+          numbers: true
+        });
     const newUser = await new User({
       ...user,
       childrens: [],
+      password: password
     }).save();
     if (childrens.length > 0) {
       for (let i = 0; i < childrens.length; i++) {
@@ -46,7 +52,7 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
       };
       newUser.save();
     }
-    //await sendMail(req.body.email, 'Створено користувача', `Пароль користувача <strong>${req.body.password}</strong>`);
+    await sendMail(user.email, 'Створено користувача', `Пароль користувача <strong>${password}</strong>`);
     res.status(200).send({
       token: genereteToken(newUser.id)
     });

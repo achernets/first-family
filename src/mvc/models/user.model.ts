@@ -43,9 +43,9 @@ const UserSchema = new Schema<IUser>(
     password: {
       type: String
     },
-    avatarUrl: { 
-      type: String, 
-      default: null 
+    avatarUrl: {
+      type: String,
+      default: null
     },
     reward: {
       type: Number,
@@ -58,10 +58,8 @@ const UserSchema = new Schema<IUser>(
 UserSchema.pre<IUser>(/save|findOneAndUpdate/, function (next) {
   // ts-ignore
   const user = this;
-  if(user.get("password")){
-    user.set("password", user.get("password"));
-  }else{
-    user.set("password", bcrypt.hashSync('xc12XC!@', 5));
+  if (user.get("password")) {
+    user.set("password", bcrypt.hashSync(user.get("password"), 5));
   }
   next();
 });
