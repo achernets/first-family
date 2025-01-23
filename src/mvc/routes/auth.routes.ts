@@ -1,5 +1,6 @@
 import express from 'express';
 import { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword } from '../controllers/user.controller';
+import { createUpdateChilds } from '../controllers/child.controller';
 
 const router = express.Router();
 
@@ -11,5 +12,6 @@ router.get('/users/:id', getById);
 router.get('/users/email/:email', isExistEmail);
 router.post('/users/:id', userUpdate);
 router.post('/users/:id/changePassword', changePassword);
+router.post('/users/:id/editMembers', createUpdateChilds);
 
 export default router;

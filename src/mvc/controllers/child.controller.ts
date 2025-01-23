@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { Development, ChildActivity, Children } from '../models';
+import { Development, ChildActivity, Children, User } from '../models';
 import { responseError } from '../../utils/helpers';
-import { IChildActivity, QueryParams } from '../../types';
+import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
 
@@ -17,13 +17,13 @@ const getChildDevelopment = async (req: Request<{
     }).populate('activityId', 'developments');
     const days = moment().startOf('d').diff(moment(child.createDate).startOf('day'), 'days');
     const groups = groupBy(activity, itm => moment(itm.createDate).startOf('day').valueOf());
-    let allSumm = keys(groups).map(key=>{
+    let allSumm = keys(groups).map(key => {
       let group = groups[key];
       return reduce(group, (hash, itm) => {
-        for(let i = 0; i<data.length; i++){
-          if(hash[data[i].id] === undefined) hash[data[i].id] = 0;
+        for (let i = 0; i < data.length; i++) {
+          if (hash[data[i].id] === undefined) hash[data[i].id] = 0;
           hash[data[i].id] += itm.activityId.developments[data[i].id];
-          if(hash[data[i].id] > 100) {
+          if (hash[data[i].id] > 100) {
             hash[data[i].id] = 100;
             continue;
           }
@@ -50,4 +50,41 @@ const createChildActivity = async (req: Request<{}, {}, IChildActivity>, res: Re
   }
 };
 
-export { getChildDevelopment, createChildActivity };
+const createUpdateChilds = async (req: Request<{
+  id: string
+}, {}, {
+  members: {
+    children: IChildren,
+    selected: Boolean
+  }[]
+}>, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { members } = req.body;
+    let newChilds = [];
+    for (let i = 0; i < members.length; i++) {
+      let id = null;
+      if (members[i].children._id) {
+        const child = await Children.findByIdAndUpdate(members[i].children._id, {
+          $set: members[i].children
+        });
+        id = child._id
+      } else {
+        const child = await new Children(members[i].children).save();
+        id = child._id
+      }
+      newChilds.push({
+        children: id,
+        selected: members[i].selected
+      });
+    }
+    const user = await User.findById(id);
+    user.childrens = newChilds;
+    user.save();
+    res.status(200).json(true);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { getChildDevelopment, createChildActivity, createUpdateChilds };
