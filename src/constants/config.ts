@@ -1,6 +1,6 @@
 const PORT = process.env.PORT || 3001;
-const MONGODB_URL =
-  "mongodb+srv://chernetsoleksandr:njuBvCBoxe9HecVW@firstfamily.ede6s.mongodb.net/?retryWrites=true&w=majority&appName=FirstFamily";
+// const MONGODB_URL = "mongodb+srv://chernetsoleksandr:njuBvCBoxe9HecVW@firstfamily.ede6s.mongodb.net/FirstFamily?retryWrites=true&w=majority&appName=FirstFamily";
+const MONGODB_URL = "mongodb+srv://chernetsoleksandr:njuBvCBoxe9HecVW@firstfamily.ede6s.mongodb.net/?retryWrites=true&w=majority&appName=FirstFamily";
 const API_PATH = "/.netlify/functions/api";
 const IMGBB_KEY = "60882d87f23b2e316786909bdc2b6787";
 const JSON_LIMIT = "50mb";
