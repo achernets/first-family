@@ -78,9 +78,11 @@ const createUpdateChilds = async (req: Request<{
         selected: members[i].selected
       });
     }
-    const user = await User.findById(id);
-    user.childrens = newChilds;
-    user.save();
+    await User.findByIdAndUpdate(id, {
+      $set: {
+        childrens: newChilds
+      }
+    });
     res.status(200).json(true);
   } catch (error) {
     responseError(res, error);
