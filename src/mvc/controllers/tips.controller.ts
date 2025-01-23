@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { addImg, getUserIdFromToken, responseError } from '../../utils/helpers';
 import { ITips, QueryParams, RequestById } from '../../types';
 import { LIMIT } from '../../constants/general';
-import { Tips, Viewer } from '../models'
+import { Tips, User, Viewer } from '../models'
 import mongoose from 'mongoose';
 
 const getAll = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
@@ -114,15 +114,23 @@ const remove = async (req: Request<RequestById>, res: Response): Promise<void> =
 
 const markAsView = async (req: Request<RequestById>, res: Response): Promise<void> => {
   try {
+    const userId = getUserIdFromToken(req.headers["token"]);
     const isExist = await Viewer.findOne({
       tipsId: req.params.id,
-      userId: getUserIdFromToken(req.headers["token"])
+      userId: userId
     });
     if (isExist === null) {
       const result = await new Viewer({
         tipsId: req.params.id,
-        userId: getUserIdFromToken(req.headers["token"])
+        userId: userId
       }).save();
+      const tips = await Tips.findById(req.params.id);
+      const user = await User.findById(userId);
+      await User.findByIdAndUpdate(userId, {
+        $set: {
+          reward: tips.reward + user.reward
+        }
+      });
       res.status(200).json(result);
     } else {
       res.status(500).json({
