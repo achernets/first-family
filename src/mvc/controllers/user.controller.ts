@@ -40,7 +40,7 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
     const newUser = await new User({
       ...user,
       childrens: [],
-      password: password
+      password: 'xc12XC!@'
     }).save();
     if (childrens.length > 0) {
       for (let i = 0; i < childrens.length; i++) {
