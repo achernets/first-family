@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PerkyPlay.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>E7A033A15486CBAC947A9CF17737114B115EBA04</string>
+				<key>dateExpires</key>
+				<string>27.01.2026</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>0.12.0</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>E7A033A15486CBAC947A9CF17737114B115EBA04</string>
+						<key>dateExpires</key>
+						<string>27.01.2026</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>hermes.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>53Q8EFTR2N</string>
+						<key>name</key>
+						<string>Almexoft OU</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.12.0</string>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>53Q8EFTR2N.com.almexoft.mh</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>53Q8EFTR2N</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>PerkyPlay.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>fe58b005-a6d9-4f7c-97e6-b472b796a400</string>
+				<key>dateExpires</key>
+				<string>27.01.2026</string>
+				<key>name</key>
+				<string>MH Ad Hoc</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>53Q8EFTR2N</string>
+				<key>name</key>
+				<string>Almexoft OU</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>
