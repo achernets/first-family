@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { Development, ChildActivity, Children, User } from '../models';
-import { responseError } from '../../utils/helpers';
+import { Development, ChildActivity, Children, User, Category } from '../models';
+import { getUserIdFromToken, responseError } from '../../utils/helpers';
 import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
@@ -43,6 +43,13 @@ const getChildDevelopment = async (req: Request<{
 const createChildActivity = async (req: Request<{}, {}, IChildActivity>, res: Response): Promise<void> => {
   try {
     const result = await new ChildActivity(req.body).save();
+    const user = await User.findById(getUserIdFromToken(req.headers["token"]));
+    const activity = await Category.findById(req.body.activityId);
+    await User.findByIdAndUpdate(user.id, {
+      $set: {
+        reward: activity.reward + user.reward
+      }
+    });
     res.status(200).json(result);
   } catch (error) {
     responseError(res, error);

@@ -4,7 +4,7 @@ import { responseError } from '../../utils/helpers';
 import { IDevelopment, QueryParams, RequestById } from '../../types';
 const getAllDevelopment = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
   try {
-    const data = await Development.find();
+    const data = await Development.find().sort({ order: 1 });
     res.status(200).json(data);
   } catch (error) {
     responseError(res, error);

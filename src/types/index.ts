@@ -44,7 +44,8 @@ type IChildren = {
 interface IDevelopment extends Document {
   name: string,
   description: string
-  type: DevelopmentType
+  type: DevelopmentType,
+  order: number
 }
 
 interface ICategory extends Document {

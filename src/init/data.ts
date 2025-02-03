@@ -8,27 +8,30 @@ const addInitalData = async () => {
       {
         "name": "Physical",
         "description": "According to the current development phase, choose activities that support your child’s holistic progress.",
-        "type": DevelopmentType.PHYSICAL
+        "type": DevelopmentType.PHYSICAL,
+        "order": 0
       },
       {
         "name": "Cognitive",
         "description": "According to the current development phase, choose activities that support your child’s holistic progress.",
-        "type": DevelopmentType.COGNITIVE
+        "type": DevelopmentType.COGNITIVE,
+        "order": 1
       },
       {
         "name": "Mental",
         "description": "According to the current development phase, choose activities that support your child’s holistic progress.",
-        "type":  DevelopmentType.MENTAL
+        "type":  DevelopmentType.MENTAL,
+        "order": 2
       }
     ]
     for (let index = 0; index < DevelopmentData.length; index++) {
       const element = DevelopmentData[index];
-      await Development.findOneAndUpdate(
+      const s = await Development.findOneAndUpdate(
         {
           type: element.type
         },
         {
-          $setOnInsert: element
+          $set: element
         },
         { upsert: true, new: true, runValidators: true }
       );
