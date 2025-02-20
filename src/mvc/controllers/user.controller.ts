@@ -34,13 +34,13 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
   try {
     const { user, childrens = [] } = req.body;
     const password = generator.generate({
-          length: 8,
-          numbers: true
-        });
+      length: 8,
+      numbers: true
+    });
     const newUser = await new User({
       ...user,
       childrens: [],
-      password: 'xc12XC!@'
+      password: password
     }).save();
     if (childrens.length > 0) {
       for (let i = 0; i < childrens.length; i++) {
@@ -148,4 +148,31 @@ const changePassword = async (req: Request<RequestById, {}, {
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword };
+const resetPassword = async (req: Request<{}, {}, {
+  email: string,
+}>, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email: email });
+    if (user) {
+      const password = generator.generate({
+        length: 8,
+        numbers: true
+      });
+      await User.findByIdAndUpdate(user.id, {
+        $set: {
+          password: password
+        }
+      }, { upsert: true, new: true });
+      await sendMail(user.email, 'Password reset', `New password <strong>${password}</strong>`);
+      res.status(200).json(true);
+    } else {
+      res.status(200).json(false);
+    }
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword };
+// $2a$05$uHyYnz9P0f17NO/Q8hkiNOkb/zL8KTyjy0b3Me84kYd0J9.4LF/Ca
