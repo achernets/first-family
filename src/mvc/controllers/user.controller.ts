@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 import { User, Children } from '../models';
-import { ISignUp, IUser, QueryParams, RequestById } from '../../types';
-import { addImg, genereteToken, responseError, sendMail } from '../../utils/helpers';
+import { IOnBoardPoll, ISignUp, IUser, QueryParams, RequestById } from '../../types';
+import { addImg, genereteToken, getUserIdFromToken, responseError, sendMail } from '../../utils/helpers';
 import bcrypt from 'bcryptjs';
 import { USER_OR_PASSWORD_ERROR } from '../../utils/text';
 import { verify } from "jsonwebtoken";
 import { SECRET_KEY_JWT } from '../../constants/config';
 import { LIMIT } from '../../constants/general';
 import generator from 'generate-password';
+import OnBoardPoll from '../../mvc/models/onboardPoll.model';
 
 const signIn = async (req: Request<{}, {}, {
   email: string,
@@ -174,5 +175,17 @@ const resetPassword = async (req: Request<{}, {}, {
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword };
+const onBoardPollHandler = async (req: Request<{}, {}, IOnBoardPoll>, res: Response): Promise<void> => {
+  try {
+    const result = await new OnBoardPoll({
+      ...req.body,
+      userId: getUserIdFromToken(req.headers["token"]),
+    }).save();
+    res.status(200).json(result);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler };
 // $2a$05$uHyYnz9P0f17NO/Q8hkiNOkb/zL8KTyjy0b3Me84kYd0J9.4LF/Ca

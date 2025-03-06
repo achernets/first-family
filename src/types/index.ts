@@ -126,6 +126,11 @@ interface IViewer extends Document {
   userId: ObjectId,
   createDate: number
 }
+
+interface IOnBoardPoll extends Document {
+  userId: ObjectId,
+  items: string[]
+}
  
 export {
   RequestById,
@@ -143,5 +148,6 @@ export {
   IPost,
   IComment,
   ILike,
-  IViewer
+  IViewer,
+  IOnBoardPoll
 };
