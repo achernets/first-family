@@ -18,6 +18,7 @@ import {
 import nodemailer from "nodemailer";
 import isBase64 from 'is-base64';
 import { uploadImage } from "./images";
+import moment from "moment";
 
 export const genereteToken = (data: string) => {
   try {
@@ -177,3 +178,18 @@ export const addImg = async (data:string | null) =>{
   if(isBase64(data, { allowMime: true })) return await uploadImage(data);
   return data;
 };
+
+export const calculateAge = (birthDate: number) => {
+  const now = moment();
+  const birth = moment(birthDate);
+  
+  const years = now.diff(birth, 'years');
+  const months = now.diff(birth.clone().add(years, 'years'), 'months');
+  
+  return {
+    years: years,
+    months: months,
+    totalMonths: now.diff(birth, 'months'),
+    formatted: `${years} років ${months} місяців`
+  };
+}

@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { Development, ChildActivity, Children, User, Category } from '../models';
-import { getUserIdFromToken, responseError } from '../../utils/helpers';
+import { calculateAge, getUserIdFromToken, responseError } from '../../utils/helpers';
 import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
+import anthropic from '../../utils/ai';
 
 const getChildDevelopment = async (req: Request<{
   id: string
@@ -96,4 +97,81 @@ const createUpdateChilds = async (req: Request<{
   }
 };
 
-export { getChildDevelopment, createChildActivity, createUpdateChilds };
+const getRecommendationActivity = async (req: Request<{
+  id: string
+}, {}, {}, QueryParams>, res: Response): Promise<void> => {
+  try {
+    const child = await Children.findById(req.params.id);
+    const lastChildActivitys = await ChildActivity.find({
+      childId: child._id,
+      createDate: { $gte: moment().startOf('day').subtract(7, 'day').valueOf() }
+    }).populate('activityId');
+    const allActivities = await Category.find();
+    const lastChildActivitysPromt = lastChildActivitys.map(itm => ({
+      //@ts-ignore
+      "id": itm?.activityId?.id,
+      //@ts-ignore
+      "name": itm?.activityId?.name,
+      //@ts-ignore
+      "description": itm?.activityId?.descriptionShort,
+      "duration": "45 minutes"
+    }));
+
+    const prompt = `
+    Analyze the activities of a ${calculateAge(child.birthdate).formatted} old child for the week and provide recommendations.
+
+    Weekly activities: ${JSON.stringify(lastChildActivitysPromt)}
+    Available activities for recommendations: ${JSON.stringify(allActivities.map(itm => ({
+      "id": itm?.id,
+      "name": itm?.name,
+      "description": itm?.descriptionShort,
+      "duration": "45 minutes"
+    })))}
+
+    Please provide 3 recommendations with multiple activities for each recommendation when possible.
+
+    Return the result ONLY in JSON format with this structure:
+
+    {
+      "analysis": {
+        "summary": "text",
+        "total_time": "text"
+      },
+      "recommendations": [
+        {
+          "text": "text_recommendation",
+          "activities": [
+            {
+              "id": "activity_id",
+              "name": "activity_name",
+              "description": ""activity_description"
+            }
+          ]
+        }
+      ]
+    }
+
+    IMPORTANT: Return ONLY valid JSON without markdown formatting, without \`\`\`json blocks.
+    `;
+
+    const message = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1500,
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    });
+    //@ts-ignore
+    const jsonResponse = JSON.parse(message.content[0].text);
+    res.json(jsonResponse);
+  } catch (error) {
+    console.log(error)
+    responseError(res, error);
+  }
+
+}
+
+export { getChildDevelopment, createChildActivity, createUpdateChilds, getRecommendationActivity };
