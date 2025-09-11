@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User, Children } from '../models';
+import { User, Children, ChildActivity } from '../models';
 import { IOnBoardPoll, ISignUp, IUser, QueryParams, RequestById } from '../../types';
 import { addImg, genereteToken, getUserIdFromToken, responseError, sendMail } from '../../utils/helpers';
 import bcrypt from 'bcryptjs';
@@ -70,6 +70,33 @@ const getMe = async (req: Request, res: Response): Promise<void> => {
     delete user.password;
     res.status(200).json(user);
   } catch (error) {
+    responseError(res, error);
+  }
+};
+
+const getMeActivityChilds = async (req: Request<{}, {}, {}, QueryParams>, res: Response): Promise<void> => {
+  try {
+    const token = req.headers["token"];
+    const d = await verify(token, SECRET_KEY_JWT);
+    const user = await User.findById(d.userId);
+    const childIds = user.childrens?.reduce((acc, curr) => {
+      acc.push(curr.children.toString());
+      return acc;
+    }, []);
+    const { limit = LIMIT, page = 1, filters } = req?.query || {};
+    const skip = (page - 1) * limit;
+    const activities = await ChildActivity.find({
+      childId: { $in: childIds }
+    }).skip(skip).limit(limit).sort({ createDate: -1 }).populate('childId', 'id, name').populate('activityId', 'id, name').populate('authorId');
+    const count = await ChildActivity.countDocuments({
+      childId: { $in: childIds }
+    });
+    res.status(200).json({
+      data: activities,
+      count
+    });
+  } catch (error) {
+    console.log(error);
     responseError(res, error);
   }
 };
@@ -187,5 +214,4 @@ const onBoardPollHandler = async (req: Request<{}, {}, IOnBoardPoll>, res: Respo
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler };
-// $2a$05$uHyYnz9P0f17NO/Q8hkiNOkb/zL8KTyjy0b3Me84kYd0J9.4LF/Ca
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds };

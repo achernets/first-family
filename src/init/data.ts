@@ -1,6 +1,5 @@
-
-import { Development } from '../../src/mvc/models';
-import { DevelopmentType } from '../../src/utils/enums';
+import { ChildActivity, Development, User } from '../../src/mvc/models';
+import { DevelopmentType, StatusChildActivityEnum } from '../../src/utils/enums';
 
 const addInitalData = async () => {
   try {
@@ -20,7 +19,7 @@ const addInitalData = async () => {
       {
         "name": "Mental",
         "description": "According to the current development phase, choose activities that support your child’s holistic progress.",
-        "type":  DevelopmentType.MENTAL,
+        "type": DevelopmentType.MENTAL,
         "order": 2
       }
     ]
@@ -36,8 +35,58 @@ const addInitalData = async () => {
         { upsert: true, new: true, runValidators: true }
       );
     }
-    
-    
+
+    await ChildActivity.updateMany(
+      { status: { $exists: false } }, // Тільки документи без поля status
+      {
+        $set: {
+          status: StatusChildActivityEnum.COMPLETE
+        }
+      }
+    );
+
+    // Отримати активності без authorId
+    const activities = await ChildActivity.find({
+      $or: [
+        { authorId: { $exists: false } },
+        { authorId: null }
+      ]
+    });
+
+    if (activities.length > 0) {
+      // Створити мапу childId -> userId
+      const users = await User.find({ childrens: { $exists: true } });
+
+      const childToUserMap = new Map();
+
+      users.forEach(user => {
+        user.childrens.forEach(el => {
+          childToUserMap.set(el.children.toString(), user._id);
+        });
+      });
+
+      // Підготувати bulk операції
+      const bulkOps = [];
+
+      activities.forEach(activity => {
+        const authorId = childToUserMap.get(activity.childId.toString());
+        if (authorId) {
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: activity._id },
+              update: { $set: { authorId: authorId } }
+            }
+          });
+        }
+      });
+
+      // Виконати bulk update
+      if (bulkOps.length > 0) {
+        const result = await ChildActivity.bulkWrite(bulkOps);
+        console.log(`Updated ${result.modifiedCount} records`);
+      }
+    }
+
   } catch (error) {
 
   }

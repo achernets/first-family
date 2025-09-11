@@ -9,12 +9,20 @@ enum Sex {
     F = 'F'
 };
 
-enum TipsType { 
+enum TipsType {
     VIDEO = 'VIDEO',
     TEXT = 'TEXT'
 }
+
+enum StatusChildActivityEnum {
+    COMPLETE = 'COMPLETE',
+    IN_PROGRESS = 'IN_PROGRESS',
+    FAILED = 'CANCELLED'
+};
+
 export {
     DevelopmentType,
     Sex,
-    TipsType
+    TipsType,
+    StatusChildActivityEnum
 }

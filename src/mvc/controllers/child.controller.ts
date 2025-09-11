@@ -5,6 +5,7 @@ import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
 import anthropic from '../../utils/ai';
+import { StatusChildActivityEnum } from '../../utils/enums';
 
 const getChildDevelopment = async (req: Request<{
   id: string
@@ -14,7 +15,8 @@ const getChildDevelopment = async (req: Request<{
     const child = await Children.findById(req.params.id);
     const activity = await ChildActivity.find({
       childId: child._id,
-      createDate: { $gte: moment().startOf('day').subtract(6, 'day').valueOf() }
+      createDate: { $gte: moment().startOf('day').subtract(6, 'day').valueOf() },
+      status: StatusChildActivityEnum.COMPLETE
     }).populate('activityId', 'developments');
     const days = moment().startOf('d').diff(moment(child.createDate).startOf('day'), 'days');
     const groups = groupBy(activity, itm => moment(itm.createDate).startOf('day').valueOf());
@@ -43,18 +45,45 @@ const getChildDevelopment = async (req: Request<{
 
 const createChildActivity = async (req: Request<{}, {}, IChildActivity>, res: Response): Promise<void> => {
   try {
-    const result = await new ChildActivity(req.body).save();
-    const user = await User.findById(getUserIdFromToken(req.headers["token"]));
-    const activity = await Category.findById(req.body.activityId);
-    await User.findByIdAndUpdate(user.id, {
-      $set: {
-        reward: activity.reward + user.reward
-      }
-    });
+    const result = await new ChildActivity({
+      ...req.body,
+      status: StatusChildActivityEnum.IN_PROGRESS,
+      authorId: getUserIdFromToken(req.headers["token"])
+    }).save();
     res.status(200).json(result);
   } catch (error) {
     responseError(res, error);
     console.log(error)
+  }
+};
+
+const finishChildActivity = async (req: Request<{
+  id: string
+}, {}, {
+  duration: number,
+  status: StatusChildActivityEnum
+}>, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { duration, status = StatusChildActivityEnum.COMPLETE } = req.body;
+    const result = await ChildActivity.findByIdAndUpdate(id, {
+      $set: {
+        status: status,
+        duration: duration
+      }
+    }, { new: true });
+    if (status === StatusChildActivityEnum.COMPLETE) {
+      const user = await User.findById(getUserIdFromToken(req.headers["token"]));
+      const activity = await Category.findById(result.activityId);
+      await User.findByIdAndUpdate(user.id, {
+        $set: {
+          reward: activity.reward + user.reward
+        }
+      });
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    responseError(res, error);
   }
 };
 
@@ -104,6 +133,7 @@ const getRecommendationActivity = async (req: Request<{
     const child = await Children.findById(req.params.id);
     const lastChildActivitys = await ChildActivity.find({
       childId: child._id,
+      status: StatusChildActivityEnum.COMPLETE,
       createDate: { $gte: moment().startOf('day').subtract(7, 'day').valueOf() }
     }).populate('activityId');
     const allActivities = await Category.find();
@@ -114,7 +144,7 @@ const getRecommendationActivity = async (req: Request<{
       "name": itm?.activityId?.name,
       //@ts-ignore
       "description": itm?.activityId?.descriptionShort,
-      "duration": "45 minutes"
+      "duration": `${itm?.duration || 0} seconds`
     }));
 
     const prompt = `
@@ -125,7 +155,7 @@ const getRecommendationActivity = async (req: Request<{
       "id": itm?.id,
       "name": itm?.name,
       "description": itm?.descriptionShort,
-      "duration": "45 minutes"
+      "duration": `${itm?.duration || 0} minutes`
     })))}
 
     Please provide 3 recommendations with multiple activities for each recommendation when possible.
@@ -150,7 +180,8 @@ const getRecommendationActivity = async (req: Request<{
         }
       ]
     }
-
+      
+    IMPORTANT: Answer more softly.
     IMPORTANT: Return ONLY valid JSON without markdown formatting, without \`\`\`json blocks.
     `;
 
@@ -174,4 +205,4 @@ const getRecommendationActivity = async (req: Request<{
 
 }
 
-export { getChildDevelopment, createChildActivity, createUpdateChilds, getRecommendationActivity };
+export { getChildDevelopment, createChildActivity, createUpdateChilds, getRecommendationActivity, finishChildActivity };

@@ -1,5 +1,5 @@
 import { ObjectId, Document } from "mongoose";
-import { DevelopmentType, Sex, TipsType } from "../utils/enums";
+import { DevelopmentType, Sex, StatusChildActivityEnum, TipsType } from "../utils/enums";
 
 interface RequestById {
   id: string;
@@ -98,7 +98,9 @@ interface IChildActivity extends Document {
   childId: ObjectId,
   activityId: ObjectId,
   duration: number,
-  createDate: number
+  createDate: number,
+  status: StatusChildActivityEnum,
+  authorId: ObjectId,
 }
 
 interface IPost extends Document {

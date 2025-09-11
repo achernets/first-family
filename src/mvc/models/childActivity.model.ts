@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { REQUIRE_TEXT } from "../../utils/text";
 import { IChildActivity } from "../../types";
+import { StatusChildActivityEnum } from "../../utils/enums";
 
 const ChildActivitySchema = new Schema<IChildActivity>(
   {
@@ -22,7 +23,18 @@ const ChildActivitySchema = new Schema<IChildActivity>(
     createDate: {
       type: Number,
       default: new Date().getTime()
-    }
+    },
+    status: {
+      type: String,
+      enum: StatusChildActivityEnum,
+      default: StatusChildActivityEnum.IN_PROGRESS,
+      required: [true, REQUIRE_TEXT],
+    },
+    authorId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, REQUIRE_TEXT],
+    },
   },
   { versionKey: false }
 );

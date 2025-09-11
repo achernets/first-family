@@ -8,7 +8,7 @@ const TOKEN_EXPIRED = "8760h";
 const SECRET_KEY_JWT = "FIRST_FAMILY";
 const GOOGLE_USER = "chernetsoleksandr.dev@gmail.com";
 const GOOGLE_APP_PASS = "jemq lqlf ielu mciy";
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 export {
   PORT,
