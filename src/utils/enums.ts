@@ -20,9 +20,16 @@ enum StatusChildActivityEnum {
     FAILED = 'CANCELLED'
 };
 
+enum MoodEnum {
+  TIRED = 'TIRED',
+  NEUTRAL = 'NEUTRAL',
+  GREAT = 'GREAT'
+};
+
 export {
     DevelopmentType,
     Sex,
     TipsType,
-    StatusChildActivityEnum
+    StatusChildActivityEnum,
+    MoodEnum
 }

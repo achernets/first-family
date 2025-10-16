@@ -5,7 +5,7 @@ import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
 import anthropic from '../../utils/ai';
-import { StatusChildActivityEnum } from '../../utils/enums';
+import { MoodEnum, StatusChildActivityEnum } from '../../utils/enums';
 
 const getChildDevelopment = async (req: Request<{
   id: string
@@ -61,15 +61,19 @@ const finishChildActivity = async (req: Request<{
   id: string
 }, {}, {
   duration: number,
-  status: StatusChildActivityEnum
+  status: StatusChildActivityEnum,
+  mood: MoodEnum,
+  comment: string
 }>, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { duration, status = StatusChildActivityEnum.COMPLETE } = req.body;
+    const { duration, status = StatusChildActivityEnum.COMPLETE, mood = null, comment = '' } = req.body;
     const result = await ChildActivity.findByIdAndUpdate(id, {
       $set: {
-        status: status,
-        duration: duration
+        status,
+        duration,
+        mood, 
+        comment
       }
     }, { new: true });
     if (status === StatusChildActivityEnum.COMPLETE) {

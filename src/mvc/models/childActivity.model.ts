@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { REQUIRE_TEXT } from "../../utils/text";
 import { IChildActivity } from "../../types";
-import { StatusChildActivityEnum } from "../../utils/enums";
+import { MoodEnum, StatusChildActivityEnum } from "../../utils/enums";
 
 const ChildActivitySchema = new Schema<IChildActivity>(
   {
@@ -35,6 +35,15 @@ const ChildActivitySchema = new Schema<IChildActivity>(
       ref: "User",
       required: [true, REQUIRE_TEXT],
     },
+    mood: {
+      type: String,
+      enum: MoodEnum,
+      default: null
+    },
+    comment: {
+      type: String,
+      default: null
+    }
   },
   { versionKey: false }
 );
