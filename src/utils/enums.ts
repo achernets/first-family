@@ -26,10 +26,23 @@ enum MoodEnum {
   GREAT = 'GREAT'
 };
 
+enum InterrgationEnum {
+    WEEK = 'WEEK',
+    MONTH = 'MONTH'
+}
+
+enum InterrgationStatusEnum {
+    IN_PROGRESS = 'IN_PROGRESS',
+    FINISH = 'FINISH',
+    SKIP = 'SKIP'
+}
+
 export {
     DevelopmentType,
     Sex,
     TipsType,
     StatusChildActivityEnum,
-    MoodEnum
+    MoodEnum,
+    InterrgationEnum,
+    InterrgationStatusEnum
 }

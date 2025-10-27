@@ -11,6 +11,7 @@ import Post from "./post.model";
 import Like from "./like.model";
 import Comment from "./comment.model";
 import Viewer from "./viewer.model";
+import { QuestionsGroup, Questions } from "./questions.model";
 
 export {
   User,
@@ -24,5 +25,7 @@ export {
   Post,
   Like,
   Comment,
-  Viewer
+  Viewer,
+  QuestionsGroup,
+  Questions
 };

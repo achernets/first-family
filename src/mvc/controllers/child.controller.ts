@@ -74,7 +74,7 @@ const finishChildActivity = async (req: Request<{
         duration,
         mood, 
         comment
-      }
+      } 
     }, { new: true });
     if (status === StatusChildActivityEnum.COMPLETE) {
       const user = await User.findById(getUserIdFromToken(req.headers["token"]));

@@ -1,5 +1,5 @@
 import { ObjectId, Document } from "mongoose";
-import { DevelopmentType, MoodEnum, Sex, StatusChildActivityEnum, TipsType } from "../utils/enums";
+import { DevelopmentType, InterrgationEnum, InterrgationStatusEnum, MoodEnum, Sex, StatusChildActivityEnum, TipsType } from "../utils/enums";
 
 interface RequestById {
   id: string;
@@ -135,6 +135,24 @@ interface IOnBoardPoll extends Document {
   userId: ObjectId,
   items: string[]
 }
+
+interface IInterrgation extends Document {
+  createDate: number,
+  status: InterrgationStatusEnum,
+  type: InterrgationEnum,
+  questions: IQuestions[]
+}
+
+interface IQuestionsGroup extends Document {
+  name: string
+}
+interface IQuestions extends Document {
+  description: string,
+  reverse: boolean,
+  type: InterrgationEnum,
+  groupId: ObjectId,
+  answer: number
+}
  
 export {
   RequestById,
@@ -153,5 +171,8 @@ export {
   IComment,
   ILike,
   IViewer,
-  IOnBoardPoll
+  IOnBoardPoll,
+  IInterrgation,
+  IQuestions,
+  IQuestionsGroup
 };
