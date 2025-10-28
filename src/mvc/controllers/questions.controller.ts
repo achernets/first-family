@@ -45,7 +45,7 @@ const getQuestions = async (req: Request<{}, {}, {}, {
           questions: group.questions.sort(() => 0.5 - Math.random())
         };
       }
-      const shuffledQuestions = group.questions.sort(() => 0.5 - Math.random());
+      const shuffledQuestions = group.questions.sort(() => 0.5 - Math.random()).slice(0, countQuestions);
       return {
         _id: group.groupId,
         groupName: group.groupName,
