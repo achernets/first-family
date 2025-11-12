@@ -133,7 +133,13 @@ interface IViewer extends Document {
 
 interface IOnBoardPoll extends Document {
   userId: ObjectId,
-  items: string[]
+  items: {
+    description: string,
+    answersQuestion: string[],
+    answer: string,
+    finishTitle: string | null,
+    finishSubtitle: string | null
+  }[]
 }
 
 interface IInterrgation extends Document {
@@ -153,7 +159,7 @@ interface IQuestions extends Document {
   groupId: ObjectId,
   answer: number
 }
- 
+
 export {
   RequestById,
   QueryParams,
