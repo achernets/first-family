@@ -31,7 +31,8 @@ interface IUser extends Document {
     selected: boolean
   }[],
   avatarUrl: string,
-  reward: number
+  reward: number,
+  countActivities: number
 }
 
 type IChildren = {
@@ -136,7 +137,7 @@ interface IOnBoardPoll extends Document {
   items: {
     description: string,
     answersQuestion: string[],
-    answer: string,
+    answer: string[],
     finishTitle: string | null,
     finishSubtitle: string | null
   }[]

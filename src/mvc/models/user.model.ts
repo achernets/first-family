@@ -50,6 +50,10 @@ const UserSchema = new Schema<IUser>(
     reward: {
       type: Number,
       default: 0
+    },
+    countActivities: {
+      type: Number,
+      default: 0
     }
   },
   { versionKey: false }

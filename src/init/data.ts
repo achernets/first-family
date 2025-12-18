@@ -45,6 +45,15 @@ const addInitalData = async () => {
       }
     );
 
+    await User.updateMany(
+      { countActivities: { $exists: false } }, // Тільки документи без поля countActivities
+      {
+        $set: {
+          countActivities: 0
+        }
+      }
+    );
+
     // Отримати активності без authorId
     const activities = await ChildActivity.find({
       $or: [
@@ -229,7 +238,7 @@ const addInitalData = async () => {
         answer: 0
       }
     ];
- for (let index = 0; index < questionsWeek.length; index++) {
+    for (let index = 0; index < questionsWeek.length; index++) {
       const element = questionsWeek[index];
       await Questions.findOneAndUpdate(
         {
@@ -454,7 +463,7 @@ const addInitalData = async () => {
         answer: 0
       }
     ];
-     for (let index = 0; index < questionsMonth.length; index++) {
+    for (let index = 0; index < questionsMonth.length; index++) {
       const element = questionsMonth[index];
       await Questions.findOneAndUpdate(
         {

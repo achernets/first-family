@@ -6,7 +6,7 @@ import { REQUIRE_TEXT } from "../../utils/text";
 const OnBoardPollItemSchema = new Schema({
   description: { type: String, required: true },
   answersQuestion: { type: [String], required: true },
-  answer: { type: String, required: true },
+  answer: { type: [String], required: false },
   finishTitle: { type: String, default: null },
   finishSubtitle: { type: String, default: null },
 });

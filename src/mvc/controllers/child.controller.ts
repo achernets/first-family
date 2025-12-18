@@ -72,16 +72,17 @@ const finishChildActivity = async (req: Request<{
       $set: {
         status,
         duration,
-        mood, 
+        mood,
         comment
-      } 
+      }
     }, { new: true });
     if (status === StatusChildActivityEnum.COMPLETE) {
       const user = await User.findById(getUserIdFromToken(req.headers["token"]));
       const activity = await Category.findById(result.activityId);
       await User.findByIdAndUpdate(user.id, {
         $set: {
-          reward: activity.reward + user.reward
+          reward: activity.reward + user.reward,
+          countActivities: user.countActivities + 1
         }
       });
     }
