@@ -40,6 +40,7 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
     });
     const newUser = await new User({
       ...user,
+      createDate: Date.now(),
       childrens: [],
       password: password
     }).save();

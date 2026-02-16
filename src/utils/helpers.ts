@@ -201,8 +201,7 @@ export const checkSurveyNeeded = (user: IUser, weeklyActivities: number, monthly
   const startOfWeek = now.clone().startOf('week').valueOf();
   const startOfMonth = now.clone().startOf('month').valueOf();
 
-  const userAgeDays = moment().diff(moment(user.createDate || (user._id as any).getTimestamp()), 'days');
-
+  const userAgeDays = moment().diff(moment(user.createDate), 'days');
   // Week check: user created > 7 days ago AND more than 3 activities this week
   if (userAgeDays >= 7 && weeklyActivities > 3) {
     if (!user.lastWeeklyInterrogation || user.lastWeeklyInterrogation < startOfWeek) {
