@@ -150,6 +150,7 @@ interface IOnBoardPoll extends Document {
 }
 
 interface IInterrgation extends Document {
+  userId: ObjectId,
   createDate: number,
   status: InterrgationStatusEnum,
   type: InterrgationEnum,

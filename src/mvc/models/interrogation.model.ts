@@ -4,6 +4,11 @@ import { InterrgationEnum, InterrgationStatusEnum } from "../../utils/enums";
 
 const InterrgationSchema = new Schema<IInterrgation>(
     {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
         createDate: {
             type: Number,
             default: Date.now

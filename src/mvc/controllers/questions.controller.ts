@@ -69,6 +69,7 @@ const finishInterrgation = async (req: Request<{}, {}, {
     const userId = getUserIdFromToken(req.headers["token"]);
 
     await new Interrgation({
+      userId,
       type,
       status,
       questions,
