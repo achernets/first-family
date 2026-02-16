@@ -54,6 +54,14 @@ const UserSchema = new Schema<IUser>(
     countActivities: {
       type: Number,
       default: 0
+    },
+    onBoarding: {
+      type: Boolean,
+      default: false
+    },
+    onTour: {
+      type: Boolean,
+      default: false
     }
   },
   { versionKey: false }

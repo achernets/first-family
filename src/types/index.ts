@@ -32,7 +32,9 @@ interface IUser extends Document {
   }[],
   avatarUrl: string,
   reward: number,
-  countActivities: number
+  countActivities: number,
+  onBoarding: boolean,
+  onTour: boolean
 }
 
 type IChildren = {

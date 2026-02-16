@@ -54,6 +54,16 @@ const addInitalData = async () => {
       }
     );
 
+    await User.updateMany(
+      { onBoarding: { $exists: false } }, // Тільки документи без поля countActivities
+      {
+        $set: {
+          onBoarding: false,
+          onTour: false
+        }
+      }
+    );
+
     // Отримати активності без authorId
     const activities = await ChildActivity.find({
       $or: [
