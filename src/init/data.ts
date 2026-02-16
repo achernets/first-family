@@ -64,6 +64,17 @@ const addInitalData = async () => {
       }
     );
 
+    await User.updateMany(
+      { lastWeeklyInterrogation: { $exists: false } },
+      {
+        $set: {
+          lastWeeklyInterrogation: 0,
+          lastMonthlyInterrogation: 0,
+          nextInterrogation: null
+        }
+      }
+    );
+
     // Отримати активності без authorId
     const activities = await ChildActivity.find({
       $or: [

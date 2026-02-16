@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { REQUIRE_TEXT } from "../../utils/text";
 import { IUser } from "../../types";
 import bcrypt from "bcryptjs";
-import { Sex } from "../../utils/enums";
+import { Sex, InterrgationEnum } from "../../utils/enums";
 
 const UserSchema = new Schema<IUser>(
   {
@@ -62,6 +62,23 @@ const UserSchema = new Schema<IUser>(
     onTour: {
       type: Boolean,
       default: false
+    },
+    createDate: {
+      type: Number,
+      default: () => new Date().getTime()
+    },
+    lastWeeklyInterrogation: {
+      type: Number,
+      default: 0
+    },
+    lastMonthlyInterrogation: {
+      type: Number,
+      default: 0
+    },
+    nextInterrogation: {
+      type: String,
+      enum: InterrgationEnum,
+      default: null
     }
   },
   { versionKey: false }
@@ -70,7 +87,10 @@ const UserSchema = new Schema<IUser>(
 UserSchema.pre<IUser>(/save|findOneAndUpdate/, function (next) {
   // ts-ignore
   const user = this;
-  if (user.get("password")) {
+  if (!user.get("createDate")) {
+    user.set("createDate", new Date().getTime());
+  }
+  if (user.get("password") && this.isModified("password")) {
     user.set("password", bcrypt.hashSync(user.get("password"), 5));
   }
   next();

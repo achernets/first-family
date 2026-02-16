@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { Questions } from '../models';
-import { responseError } from '../../utils/helpers';
-import { InterrgationEnum } from '../../utils/enums';
+import { Interrgation, Questions, User } from '../models';
+import { getUserIdFromToken, responseError } from '../../utils/helpers';
+import { InterrgationEnum, InterrgationStatusEnum } from '../../utils/enums';
+import { IQuestions } from '../../types';
 
 const getQuestions = async (req: Request<{}, {}, {}, {
   type: string
@@ -58,4 +59,35 @@ const getQuestions = async (req: Request<{}, {}, {}, {
   }
 };
 
-export { getQuestions };
+const finishInterrgation = async (req: Request<{}, {}, {
+  type: InterrgationEnum,
+  status: InterrgationStatusEnum,
+  questions?: IQuestions[]
+}>, res: Response): Promise<void> => {
+  try {
+    const { type, status, questions = [] } = req.body;
+    const userId = getUserIdFromToken(req.headers["token"]);
+
+    await new Interrgation({
+      type,
+      status,
+      questions,
+      createDate: Date.now()
+    }).save();
+
+    const update: any = { nextInterrogation: null };
+    if (type === InterrgationEnum.WEEK) {
+      update.lastWeeklyInterrogation = Date.now();
+    } else if (type === InterrgationEnum.MONTH) {
+      update.lastMonthlyInterrogation = Date.now();
+    }
+
+    await User.findByIdAndUpdate(userId, { $set: update });
+
+    res.status(200).json(true);
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { getQuestions, finishInterrgation };

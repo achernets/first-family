@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Development, ChildActivity, Children, User, Category } from '../models';
-import { calculateAge, getUserIdFromToken, responseError } from '../../utils/helpers';
+import { calculateAge, checkSurveyNeeded, getUserIdFromToken, responseError } from '../../utils/helpers';
 import { IChildActivity, IChildren, QueryParams } from '../../types';
 import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
@@ -77,12 +77,31 @@ const finishChildActivity = async (req: Request<{
       }
     }, { new: true });
     if (status === StatusChildActivityEnum.COMPLETE) {
-      const user = await User.findById(getUserIdFromToken(req.headers["token"]));
+      const userId = getUserIdFromToken(req.headers["token"]);
+      const user = await User.findById(userId);
       const activity = await Category.findById(result.activityId);
+
+      const startOfWeek = moment().startOf('week').valueOf();
+      const startOfMonth = moment().startOf('month').valueOf();
+
+      const [weeklyCount, monthlyCount] = await Promise.all([
+        ChildActivity.countDocuments({
+          authorId: userId,
+          status: StatusChildActivityEnum.COMPLETE,
+          createDate: { $gte: startOfWeek }
+        }),
+        ChildActivity.countDocuments({
+          authorId: userId,
+          status: StatusChildActivityEnum.COMPLETE,
+          createDate: { $gte: startOfMonth }
+        })
+      ]);
+
       await User.findByIdAndUpdate(user.id, {
         $set: {
           reward: activity.reward + user.reward,
-          countActivities: user.countActivities + 1
+          countActivities: user.countActivities + 1,
+          nextInterrogation: checkSurveyNeeded(user, weeklyCount, monthlyCount)
         }
       });
     }

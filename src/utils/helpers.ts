@@ -6,9 +6,11 @@ import {
   SERVER_ERROR_TEXT,
   UNIQUE_FIELD_TEXT,
 } from "./text";
-import { keys, reduce, head } from "lodash";
+import { head, keys, reduce } from "lodash";
 import { RootFilterQuery } from "mongoose";
 import { sign, verify } from "jsonwebtoken";
+import { InterrgationEnum } from "./enums";
+import { IUser } from "../types";
 import {
   GOOGLE_APP_PASS,
   GOOGLE_USER,
@@ -173,23 +175,47 @@ export const sendMail = async (
   }
 };
 
-export const addImg = async (data:string | null) =>{
-  if(data === '' || data === null) return null;
-  if(isBase64(data, { allowMime: true })) return await uploadImage(data);
+export const addImg = async (data: string | null) => {
+  if (data === '' || data === null) return null;
+  if (isBase64(data, { allowMime: true })) return await uploadImage(data);
   return data;
 };
 
 export const calculateAge = (birthDate: number) => {
   const now = moment();
   const birth = moment(birthDate);
-  
+
   const years = now.diff(birth, 'years');
   const months = now.diff(birth.clone().add(years, 'years'), 'months');
-  
+
   return {
     years: years,
     months: months,
     totalMonths: now.diff(birth, 'months'),
     formatted: `${years} років ${months} місяців`
   };
+}
+
+export const checkSurveyNeeded = (user: IUser, weeklyActivities: number, monthlyActivities: number) => {
+  const now = moment();
+  const startOfWeek = now.clone().startOf('week').valueOf();
+  const startOfMonth = now.clone().startOf('month').valueOf();
+
+  const userAgeDays = moment().diff(moment(user.createDate || (user._id as any).getTimestamp()), 'days');
+
+  // Week check: user created > 7 days ago AND more than 3 activities this week
+  if (userAgeDays >= 7 && weeklyActivities > 3) {
+    if (!user.lastWeeklyInterrogation || user.lastWeeklyInterrogation < startOfWeek) {
+      return InterrgationEnum.WEEK;
+    }
+  }
+
+  // Month check: user created > 30 days ago AND more than 12 activities this month
+  if (userAgeDays >= 30 && monthlyActivities > 12) {
+    if (!user.lastMonthlyInterrogation || user.lastMonthlyInterrogation < startOfMonth) {
+      return InterrgationEnum.MONTH;
+    }
+  }
+
+  return null;
 }

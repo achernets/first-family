@@ -34,7 +34,11 @@ interface IUser extends Document {
   reward: number,
   countActivities: number,
   onBoarding: boolean,
-  onTour: boolean
+  onTour: boolean,
+  createDate?: number,
+  lastWeeklyInterrogation?: number,
+  lastMonthlyInterrogation?: number,
+  nextInterrogation?: InterrgationEnum | null
 }
 
 type IChildren = {
