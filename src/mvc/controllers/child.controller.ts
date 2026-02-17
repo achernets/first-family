@@ -6,6 +6,7 @@ import moment from 'moment';
 import { groupBy, keys, reduce, sumBy } from 'lodash';
 import anthropic from '../../utils/ai';
 import { MoodEnum, StatusChildActivityEnum } from '../../utils/enums';
+import mongoose from 'mongoose';
 
 const getChildDevelopment = async (req: Request<{
   id: string
@@ -83,19 +84,67 @@ const finishChildActivity = async (req: Request<{
 
       const startOfWeek = moment().startOf('week').valueOf();
       const startOfMonth = moment().startOf('month').valueOf();
+      const userAgeDays = moment().diff(moment(user.createDate), 'days');
 
-      const [weeklyCount, monthlyCount] = await Promise.all([
-        ChildActivity.countDocuments({
-          authorId: userId,
-          status: StatusChildActivityEnum.COMPLETE,
-          createDate: { $gte: startOfWeek }
-        }),
-        ChildActivity.countDocuments({
-          authorId: userId,
-          status: StatusChildActivityEnum.COMPLETE,
-          createDate: { $gte: startOfMonth }
-        })
-      ]);
+      const needWeekly = userAgeDays >= 7 && (!user.lastWeeklyInterrogation || user.lastWeeklyInterrogation < startOfWeek);
+      const needMonthly = userAgeDays >= 30 && (!user.lastMonthlyInterrogation || user.lastMonthlyInterrogation < startOfMonth);
+
+      let weeklyCount = 0;
+      let monthlyCount = 0;
+
+      if (needWeekly || needMonthly) {
+        const [weeklyCountAgg, monthlyCountAgg] = await Promise.all([
+          needWeekly ? ChildActivity.aggregate([
+            {
+              $match: {
+                authorId: new mongoose.Types.ObjectId(userId),
+                status: StatusChildActivityEnum.COMPLETE,
+                createDate: { $gte: startOfWeek }
+              }
+            },
+            {
+              $addFields: {
+                createDateObj: { $toDate: "$createDate" }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  day: { $dateToString: { format: "%Y-%m-%d", date: "$createDateObj" } }
+                },
+                doc: { $first: "$$ROOT" }
+              }
+            },
+            { $count: "count" }
+          ]) : Promise.resolve([]),
+          needMonthly ? ChildActivity.aggregate([
+            {
+              $match: {
+                authorId: new mongoose.Types.ObjectId(userId),
+                status: StatusChildActivityEnum.COMPLETE,
+                createDate: { $gte: startOfMonth }
+              }
+            },
+            {
+              $addFields: {
+                createDateObj: { $toDate: "$createDate" }
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  day: { $dateToString: { format: "%Y-%m-%d", date: "$createDateObj" } }
+                },
+                doc: { $first: "$$ROOT" }
+              }
+            },
+            { $count: "count" }
+          ]) : Promise.resolve([])
+        ]);
+
+        weeklyCount = weeklyCountAgg[0]?.count || 0;
+        monthlyCount = monthlyCountAgg[0]?.count || 0;
+      }
 
       await User.findByIdAndUpdate(user.id, {
         $set: {
