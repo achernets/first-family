@@ -75,6 +75,17 @@ const addInitalData = async () => {
       }
     );
 
+
+
+    await User.updateMany(
+      { createDate: { $exists: false } },
+      {
+        $set: {
+          createDate: 1704067200000,
+        }
+      }
+    );
+
     // Отримати активності без authorId
     const activities = await ChildActivity.find({
       $or: [
