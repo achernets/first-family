@@ -91,7 +91,8 @@ UserSchema.pre<IUser>(/save|findOneAndUpdate/, function (next) {
   //   console.log(user.get("createDate"), "createDate")
   //   user.set("createDate", new Date().getTime());
   // }
-  if (user.get("password") && this.isModified("password")) {
+  //if (user.get("password") && this.isModified("password")) {
+  if (user.get("password")) {
     user.set("password", bcrypt.hashSync(user.get("password"), 5));
   }
   next();
