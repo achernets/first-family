@@ -32,7 +32,7 @@ const InterrgationSchema = new Schema<IInterrgation>(
                     enum: InterrgationEnum
                 },
                 groupId: Schema.Types.ObjectId,
-                answer: Number
+                answer: String
             }
         ]
     },
