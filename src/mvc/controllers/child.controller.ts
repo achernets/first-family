@@ -220,8 +220,10 @@ const getRecommendationActivity = async (req: Request<{
       "duration": `${itm?.duration || 0} seconds`
     }));
 
+    const ageString = child?.birthdate && child.birthdate !== null && child.birthdate !== undefined ? `Analyze the activities of a ${calculateAge(child.birthdate).formatted} old child for the week and provide recommendations.` : `Analyze the activities of a child for the week and provide recommendations.`;
+
     const prompt = `
-    Analyze the activities of a ${calculateAge(child.birthdate).formatted} old child for the week and provide recommendations.
+    ${ageString}
 
     Weekly activities: ${JSON.stringify(lastChildActivitysPromt)}
     Available activities for recommendations: ${JSON.stringify(allActivities.map(itm => ({

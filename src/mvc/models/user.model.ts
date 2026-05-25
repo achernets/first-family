@@ -16,12 +16,12 @@ const UserSchema = new Schema<IUser>(
     },
     birthdate: {
       type: Number,
-      required: [true, REQUIRE_TEXT],
+      default: null
     },
     sex: {
       type: String,
       enum: Sex,
-      required: [true, REQUIRE_TEXT],
+      default: null
     },
     childrens: [
       {

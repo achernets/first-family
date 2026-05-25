@@ -11,12 +11,12 @@ const ChildrenSchema = new Schema<IChildren>(
     },
     birthdate: {
       type: Number,
-      required: [true, REQUIRE_TEXT],
+      default: null
     },
     sex: {
       type: String,
       enum: Sex,
-      required: [true, REQUIRE_TEXT],
+      default: null
     },
     createDate: {
       type: Number,
