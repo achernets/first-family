@@ -52,6 +52,7 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
           selected: childrens[i].selected
         })
       };
+      newUser.password = password;
       newUser.save();
     }
     await sendMail(user.email, 'Створено користувача', `Пароль користувача <strong>${password}</strong>`);
