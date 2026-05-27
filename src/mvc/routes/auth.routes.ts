@@ -1,5 +1,5 @@
 import express from 'express';
-import { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds } from '../controllers/user.controller';
+import { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount } from '../controllers/user.controller';
 import { createUpdateChilds } from '../controllers/child.controller';
 
 const router = express.Router();
@@ -16,6 +16,7 @@ router.post('/users/:id', userUpdate);
 router.post('/users/:id/changePassword', changePassword);
 router.post('/users/:id/editMembers', createUpdateChilds);
 router.post('/users/:id/onBoardPoll', onBoardPollHandler);
+router.delete('/deleteAccount', deleteAccount);
 
 
 export default router;

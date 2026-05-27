@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User, Children, ChildActivity } from '../models';
+import { User, Children, ChildActivity, Post, Comment, Like, Interrgation } from '../models';
 import { IOnBoardPoll, ISignUp, IUser, QueryParams, RequestById } from '../../types';
 import { addImg, genereteToken, getUserIdFromToken, responseError, sendMail } from '../../utils/helpers';
 import bcrypt from 'bcryptjs';
@@ -215,4 +215,42 @@ const onBoardPollHandler = async (req: Request<{}, {}, IOnBoardPoll>, res: Respo
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds };
+const deleteAccount = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const token = req.headers["token"];
+    const d = await verify(token, SECRET_KEY_JWT);
+    const userId = d.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Collect child IDs belonging to this user
+    const childIds = user.childrens?.map(c => c.children) || [];
+
+    // Delete all related data in parallel
+    await Promise.all([
+      // Children & their activities
+      Children.deleteMany({ _id: { $in: childIds } }),
+      ChildActivity.deleteMany({ authorId: userId }),
+      // Posts, comments, likes
+      Post.deleteMany({ authorId: userId }),
+      Comment.deleteMany({ userId: userId }),
+      Like.deleteMany({ userId: userId }),
+      // Polls & interrogations
+      OnBoardPoll.deleteMany({ userId: userId }),
+      Interrgation.deleteMany({ userId: userId }),
+    ]);
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    responseError(res, error);
+  }
+};
+
+export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount };
