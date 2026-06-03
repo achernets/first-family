@@ -60,6 +60,7 @@ export const responseError = (
   error: any,
   recordIsExistText = "Такий запис вже існує"
 ) => {
+  console.log(error);
   if (error?.name === "ValidationError") {
     res.status(500).send({
       message: FORM_DARA_ERROR_TEXT,

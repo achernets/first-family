@@ -1,5 +1,5 @@
 import { ChildActivity, Development, User, Questions, QuestionsGroup } from '../../src/mvc/models';
-import { DevelopmentType, InterrgationEnum, StatusChildActivityEnum } from '../../src/utils/enums';
+import { DevelopmentType, InterrgationEnum, StatusChildActivityEnum, UserType } from '../../src/utils/enums';
 
 const addInitalData = async () => {
   try {
@@ -50,6 +50,15 @@ const addInitalData = async () => {
       {
         $set: {
           countActivities: 0
+        }
+      }
+    );
+
+    await User.updateMany(
+      { type: { $exists: false } },
+      {
+        $set: {
+          type: UserType.USER
         }
       }
     );

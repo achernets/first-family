@@ -1,5 +1,5 @@
 import { ObjectId, Document } from "mongoose";
-import { DevelopmentType, InterrgationEnum, InterrgationStatusEnum, MoodEnum, Sex, StatusChildActivityEnum, TipsType } from "../utils/enums";
+import { DevelopmentType, InterrgationEnum, InterrgationStatusEnum, MoodEnum, Sex, StatusChildActivityEnum, TipsType, UserType } from "../utils/enums";
 
 interface RequestById {
   id: string;
@@ -38,7 +38,8 @@ interface IUser extends Document {
   createDate?: number,
   lastWeeklyInterrogation?: number,
   lastMonthlyInterrogation?: number,
-  nextInterrogation?: InterrgationEnum | null
+  nextInterrogation?: InterrgationEnum | null,
+  type: UserType
 }
 
 type IChildren = {

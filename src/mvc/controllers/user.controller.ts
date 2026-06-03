@@ -9,6 +9,7 @@ import { SECRET_KEY_JWT } from '../../constants/config';
 import { LIMIT } from '../../constants/general';
 import generator from 'generate-password';
 import OnBoardPoll from '../../mvc/models/onboardPoll.model';
+import { UserType } from '../../utils/enums';
 
 const signIn = async (req: Request<{}, {}, {
   email: string,
@@ -63,6 +64,71 @@ const signUp = async (req: Request<{}, {}, ISignUp>, res: Response): Promise<voi
     responseError(res, error);
   }
 };
+
+const signInGuest = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = new User({
+      name: 'Guest',
+      surname: 'Guest',
+      sex: null,
+      reward: 0,
+      birthdate: null,
+      email: '',
+      type: UserType.GUEST,
+      createDate: Date.now(),
+      childrens: []
+    });
+
+    const child = await new Children({
+      name: 'Child 1',
+      surname: 'Guest',
+      birthdate: null,
+      sex: null,
+      createDate: Date.now()
+    }).save();
+    user.childrens.push({
+      children: child.id,
+      selected: true
+    });
+    delete user.password;
+    await user.save();
+
+    res.status(200).send({
+      token: genereteToken(user.id)
+    });
+  } catch (error) {
+    responseError(res, error);
+  }
+}
+
+const guestToUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+    const token = req.headers["token"];
+    const d = await verify(token, SECRET_KEY_JWT);
+    const user = await User.findById(d.userId);
+    if (user.type !== UserType.GUEST) {
+      res.status(400).json({ message: 'User is not a guest' });
+      return;
+    }
+    const isExist = await User.findOne({ email });
+    if (isExist) {
+      res.status(400).json({ message: 'User is already exists' });
+      return;
+    }
+    const newUser = await User.findByIdAndUpdate(user.id, {
+      $set: {
+        email: email,
+        password: password,
+        type: UserType.USER
+      }
+    }, { upsert: true, new: true }).populate("childrens.children");
+    delete newUser.password;
+    res.status(200).json(newUser);
+  } catch (error) {
+    responseError(res, error);
+  }
+}
 
 const getMe = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -254,4 +320,4 @@ const deleteAccount = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount };
+export { signIn, signUp, signInGuest, guestToUser, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount };

@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { REQUIRE_TEXT } from "../../utils/text";
 import { IUser } from "../../types";
 import bcrypt from "bcryptjs";
-import { Sex, InterrgationEnum } from "../../utils/enums";
+import { Sex, InterrgationEnum, UserType } from "../../utils/enums";
 
 const UserSchema = new Schema<IUser>(
   {
@@ -38,7 +38,7 @@ const UserSchema = new Schema<IUser>(
     email: {
       type: String,
       unique: true,
-      required: [true, REQUIRE_TEXT],
+      //required: [true, REQUIRE_TEXT],
     },
     password: {
       type: String
@@ -79,6 +79,11 @@ const UserSchema = new Schema<IUser>(
       type: String,
       enum: InterrgationEnum,
       default: null
+    },
+    type: {
+      type: String,
+      enum: UserType,
+      default: UserType.GUEST
     }
   },
   { versionKey: false }

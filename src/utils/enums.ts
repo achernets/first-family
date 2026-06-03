@@ -4,6 +4,11 @@ enum DevelopmentType {
     MENTAL = 'MENTAL'
 };
 
+enum UserType {
+    USER = 'USER',
+    GUEST = 'GUEST'
+}
+
 enum Sex {
     M = 'M',
     F = 'F'
@@ -21,9 +26,9 @@ enum StatusChildActivityEnum {
 };
 
 enum MoodEnum {
-  TIRED = 'TIRED',
-  NEUTRAL = 'NEUTRAL',
-  GREAT = 'GREAT'
+    TIRED = 'TIRED',
+    NEUTRAL = 'NEUTRAL',
+    GREAT = 'GREAT'
 };
 
 enum InterrgationEnum {
@@ -39,6 +44,7 @@ enum InterrgationStatusEnum {
 
 export {
     DevelopmentType,
+    UserType,
     Sex,
     TipsType,
     StatusChildActivityEnum,

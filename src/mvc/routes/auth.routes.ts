@@ -1,5 +1,5 @@
 import express from 'express';
-import { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount } from '../controllers/user.controller';
+import { signIn, signUp, getMe, getAll, getById, isExistEmail, userUpdate, changePassword, resetPassword, onBoardPollHandler, getMeActivityChilds, deleteAccount, signInGuest, guestToUser } from '../controllers/user.controller';
 import { createUpdateChilds } from '../controllers/child.controller';
 
 const router = express.Router();
@@ -7,6 +7,8 @@ const router = express.Router();
 router.get('/getMe', getMe);
 router.post('/signIn', signIn);
 router.post('/signUp', signUp);
+router.post('/signInGuest', signInGuest);
+router.post('/guestToUser', guestToUser);
 router.post('/resetPassword', resetPassword);
 router.get('/users/getAll', getAll);
 router.get('/users/getMeActivityChilds', getMeActivityChilds);
@@ -17,6 +19,5 @@ router.post('/users/:id/changePassword', changePassword);
 router.post('/users/:id/editMembers', createUpdateChilds);
 router.post('/users/:id/onBoardPoll', onBoardPollHandler);
 router.delete('/deleteAccount', deleteAccount);
-
 
 export default router;
