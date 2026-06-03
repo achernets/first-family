@@ -37,7 +37,8 @@ const UserSchema = new Schema<IUser>(
     ],
     email: {
       type: String,
-      unique: true,
+      //unique: true,
+      default: null
       //required: [true, REQUIRE_TEXT],
     },
     password: {
